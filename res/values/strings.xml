@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, GtalkShareActivity!</string>
+    <string name="app_name">GtalkShare</string>
+    
+    <string name="account_setting">Account Setting</string>
+    <string name="user_name">User Name</string>
+    <string name="password">Password</string>
+    
+    <string name="user_name_summary">please input your gtalk account</string>
+    <string name="password_summary">please input your gtalk password</string>
+    
+    <string name="send_btn">send</string>
+    <string name="content_hint">please input content</string>
+    <string name="user_name_filter">please input friends gtalk user name</string>
+
+</resources>
