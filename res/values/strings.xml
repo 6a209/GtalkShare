@@ -2,7 +2,7 @@
 <resources>
 
     <string name="hello">Hello World, GtalkShareActivity!</string>
-    <string name="app_name">GtalkShare</string>
+    <string name="app_name">Gtalk</string>
     
     <string name="account_setting">Account Setting</string>
     <string name="user_name">User Name</string>
@@ -14,5 +14,6 @@
     <string name="send_btn">send</string>
     <string name="content_hint">please input content</string>
     <string name="user_name_filter">please input friends gtalk user name</string>
-
+    <string name="share_success">share success</string>
+    <string name="err_toast">net err or account set err</string>
 </resources>

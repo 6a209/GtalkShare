@@ -1,9 +1,11 @@
 package com.gtalkshare;
 
-import com.gtalkshare.R;
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 
 /**
@@ -14,6 +16,8 @@ import android.preference.PreferenceManager;
 public class GtalkUtils{
 	
 	private Context mCtx;
+	private Account mAccount;
+	
 	
 	private static GtalkUtils sUtils;
 	
@@ -39,13 +43,35 @@ public class GtalkUtils{
 	public String getUser(){
 		SharedPreferences preferences = 
 				PreferenceManager.getDefaultSharedPreferences(mCtx);
-		return preferences.getString(getString(R.string.user_name), INVALUE);
+		String userName = INVALUE;
+		AccountManager manager = AccountManager.get(mCtx);
+		Account [] array = manager.getAccountsByType("com.google");
+		if(array.length != 0){
+			mAccount = array[0];
+			Log.v("the count is ", array[0].name);
+			userName = array[0].name;
+			SharedPreferences.Editor editor = preferences.edit();
+			editor.putString(getString(R.string.user_name), userName);
+			editor.commit();
+//			return array[0].name;
+		}else{
+//			return null;
+		}
+//	 
+		return preferences.getString(getString(R.string.user_name), userName);
 	}
 	
 	public String getPassword(){
 		SharedPreferences preferences = 
 				PreferenceManager.getDefaultSharedPreferences(mCtx);
 		return preferences.getString(getString(R.string.password), INVALUE);
+//		if(null != mAccount){
+//			AccountManager manager = AccountManager.get(mCtx);
+//			Log.v("the password is", manager.getPassword(mAccount));
+//			return manager.getPassword(mAccount);
+//		}
+//		return null;
+		
 	}
 	
 	public String getString(int id){

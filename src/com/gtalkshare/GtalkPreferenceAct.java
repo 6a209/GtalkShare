@@ -12,6 +12,4 @@ public class GtalkPreferenceAct extends PreferenceActivity{
 		addPreferencesFromResource(R.layout.preference);
 	}
 	
-	
-	
 }

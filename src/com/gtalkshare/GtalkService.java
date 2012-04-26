@@ -1,8 +1,6 @@
 package com.gtalkshare;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.ChatManager;
@@ -12,7 +10,9 @@ import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Presence;
 
+import android.accounts.AccountManager;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * 
@@ -22,7 +22,7 @@ import android.util.Log;
 public class GtalkService {
 
 	private XMPPConnection mConnection;
-
+	
 	// private Handler
 	/**
 	 * 帐号登入
@@ -67,14 +67,16 @@ public class GtalkService {
 	 * @param uid
 	 * @param message
 	 */
-	public void sendMessage(String userName, String message) {
+	public boolean sendMessage(String userName, String message) {
 		ChatManager chatmanager = mConnection.getChatManager();
 		Chat chat = chatmanager.createChat(userName, null);
 		try {
 			chat.sendMessage(message);
+			return true;
 		} catch (XMPPException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return false;
 		}
 	}
 }
