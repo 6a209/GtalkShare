@@ -1,12 +1,9 @@
 package com.gtalkshare;
 
-import org.xbill.DNS.MRRecord;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -16,7 +13,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-public class GtalkShareAct extends A6BaseAct {
+
+/**
+ * 
+ * @author 6a209
+ * Jun 1, 2013
+ */
+public class GtalkShareAct extends BaseAct {
 	
 	private GtalkService mService;
 	private GtalkUtils mUtils;
@@ -28,15 +31,31 @@ public class GtalkShareAct extends A6BaseAct {
 	private Button mSendBtn;
 	
 	private boolean mIsSucc = false;
+	private String [] mFriendsArray;
 	
 	private static final int TO_SETTING = 0x01;
+	
+	private static final int INIT_ACCOUNT_MSG = 0x10;
+	private static final int SEND_MSG = 0x11;
+	private static final int GET_FIRENDS_MSG = 0x12;
 	
 	private Handler mHander = new Handler(){
 		@Override
 		public void handleMessage(Message msg){
-			String str = getResources().getString(R.string.share_success);
-			Toast.makeText(GtalkShareAct.this, str, Toast.LENGTH_SHORT).show();
-			finish();
+			switch(msg.what){
+			case SEND_MSG:
+				String str = getResources().getString(R.string.share_success);
+				Toast.makeText(GtalkShareAct.this, str, Toast.LENGTH_SHORT).show();
+				finish();
+				break;
+			case INIT_ACCOUNT_MSG:
+				
+				break;
+			case GET_FIRENDS_MSG:
+				
+				break;
+			}
+			
 		}
 	};
 	
@@ -104,29 +123,7 @@ public class GtalkShareAct extends A6BaseAct {
     		
 			@Override
 			public void onClick(View v) {
-				final String content = mEditContent.getText().toString();
-				if(null == content || 0 == content.length()){
-					Toast.makeText(GtalkShareAct.this, 
-						mUtils.getString(R.string.content_hint), Toast.LENGTH_SHORT).show();
-					return;
-				}
-				final String userName = mUserNameAutoComplete.getText().toString();
-//				Log.v("the cur user name is ", userName);
-				if(null == userName || 0 == userName.length()){
-					Toast.makeText(GtalkShareAct.this, 
-						mUtils.getString(R.string.user_name_filter), Toast.LENGTH_SHORT).show();
-					return;
-				}
-				new Thread(){
-					@Override
-					public void run(){
-						boolean success = mService.sendMessage(userName, content);
-						if(success){
-							mHander.sendEmptyMessage(0);
-						}
-					}
-				}.start();
-				
+				reqSendMsg();
 			}
 		});
     	
@@ -138,5 +135,49 @@ public class GtalkShareAct extends A6BaseAct {
 		startActivityForResult(intent, TO_SETTING);
     }
     
+    private void reqInitAccount(final String userName, final String password){
+    	new Thread(){
+    		@Override
+    		public void run(){
+    			mIsSucc = mService.initAccount(userName, password);
+    			Message msg = mHander.obtainMessage(INIT_ACCOUNT_MSG);
+    			mHander.sendMessage(msg);
+    		}
+    	}.start();
+    }
     
+    private void reqFriend(){
+    	new Thread(){
+    		@Override
+    		public void run(){
+    			String [] array = null;
+    			array = mService.getFriends();
+    			
+    		}
+    	}.start();
+    }
+    
+    private void reqSendMsg(){
+    	final String content = mEditContent.getText().toString();
+		if(null == content || 0 == content.length()){
+			Toast.makeText(GtalkShareAct.this, 
+				mUtils.getString(R.string.content_hint), Toast.LENGTH_SHORT).show();
+			return;
+		}
+		final String userName = mUserNameAutoComplete.getText().toString();
+		if(null == userName || 0 == userName.length()){
+			Toast.makeText(GtalkShareAct.this, 
+				mUtils.getString(R.string.user_name_filter), Toast.LENGTH_SHORT).show();
+			return;
+		}
+		new Thread(){
+			@Override
+			public void run(){
+				boolean success = mService.sendMessage(userName, content);
+				if(success){
+					mHander.sendEmptyMessage(SEND_MSG);
+				}
+			}
+		}.start();
+    }
 }

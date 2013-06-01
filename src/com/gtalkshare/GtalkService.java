@@ -57,7 +57,7 @@ public class GtalkService {
 		for(int i = 0; i < rosterEntries.size(); i++){
 			array[i] = rosterArray[i].getUser();
 		}
-		Log.d("user is ", array.toString());
+//		Log.d("user is ", array.toString());
 		return array;
 	}
 

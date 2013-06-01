@@ -48,16 +48,12 @@ public class GtalkUtils{
 		Account [] array = manager.getAccountsByType("com.google");
 		if(array.length != 0){
 			mAccount = array[0];
-			Log.v("the count is ", array[0].name);
 			userName = array[0].name;
 			SharedPreferences.Editor editor = preferences.edit();
 			editor.putString(getString(R.string.user_name), userName);
 			editor.commit();
-//			return array[0].name;
 		}else{
-//			return null;
 		}
-//	 
 		return preferences.getString(getString(R.string.user_name), userName);
 	}
 	

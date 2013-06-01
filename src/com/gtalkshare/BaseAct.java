@@ -1,16 +1,16 @@
 package com.gtalkshare;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.actionbarsherlock.app.SherlockActivity;
 import com.flurry.android.FlurryAgent;
 
 
-public class A6BaseAct extends Activity{
+public class BaseAct extends SherlockActivity{
 	
 	protected LinearLayout mLyTitle;
 	protected FrameLayout mLyBody;
