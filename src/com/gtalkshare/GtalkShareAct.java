@@ -30,8 +30,7 @@ public class GtalkShareAct extends BaseAct {
 	private AutoCompleteTextView mUserNameAutoComplete;
 	private Button mSendBtn;
 	
-	private boolean mIsSucc = false;
-	private String [] mFriendsArray;
+	
 	
 	private static final int TO_SETTING = 0x01;
 	
@@ -48,11 +47,7 @@ public class GtalkShareAct extends BaseAct {
 				Toast.makeText(GtalkShareAct.this, str, Toast.LENGTH_SHORT).show();
 				finish();
 				break;
-			case INIT_ACCOUNT_MSG:
-				
-				break;
-			case GET_FIRENDS_MSG:
-				
+			default:
 				break;
 			}
 			
@@ -62,7 +57,6 @@ public class GtalkShareAct extends BaseAct {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.main);
         LayoutInflater inflater = LayoutInflater.from(this);
         inflater.inflate(R.layout.base_title, mLyTitle, true);
         inflater.inflate(R.layout.main, mLyBody, true);
@@ -90,35 +84,16 @@ public class GtalkShareAct extends BaseAct {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
     	if(TO_SETTING == requestCode){
-    		if(!mIsSucc){
-        		init(mEditContent.getText().toString());
-    		}
+//    		if(!mIsSucc){
+//        		init(mEditContent.getText().toString());
+//    		}
     	}
     }
     
     private void init(String content){
     	mEditContent.setText(content);
-    	String [] array = null;
-    	String userName = mUtils.getUser();
-    	String password = mUtils.getPassword();
-    	if(userName.equals(GtalkUtils.INVALUE) || password.equals(GtalkUtils.INVALUE)){
-    		toSetting();
-    		return;
-    	}
     	
-    	mIsSucc = mService.initAccount(userName, password);
-    	if(mIsSucc){
-    		array = mService.getFriends();
-    	}else{
-    		Toast.makeText(this, getString(R.string.err_toast), Toast.LENGTH_SHORT).show();
-    		return;
-    	}
-    	
-    	ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, array);
-//    	Log.v("the list is ", array.toString() + array.length);
-    	mUserNameAutoComplete.setAdapter(adapter);
-
+//    	reqInitAccount(userName, password);
     	mSendBtn.setOnClickListener(new OnClickListener() {
     		
 			@Override
@@ -135,27 +110,7 @@ public class GtalkShareAct extends BaseAct {
 		startActivityForResult(intent, TO_SETTING);
     }
     
-    private void reqInitAccount(final String userName, final String password){
-    	new Thread(){
-    		@Override
-    		public void run(){
-    			mIsSucc = mService.initAccount(userName, password);
-    			Message msg = mHander.obtainMessage(INIT_ACCOUNT_MSG);
-    			mHander.sendMessage(msg);
-    		}
-    	}.start();
-    }
-    
-    private void reqFriend(){
-    	new Thread(){
-    		@Override
-    		public void run(){
-    			String [] array = null;
-    			array = mService.getFriends();
-    			
-    		}
-    	}.start();
-    }
+ 
     
     private void reqSendMsg(){
     	final String content = mEditContent.getText().toString();
