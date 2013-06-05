@@ -4,12 +4,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <EditText
+  <!--   <EditText
         android:id="@+id/friend_filter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="text" />
-
+ -->
     <ListView
         android:id="@+id/friend_list"
         android:layout_width="match_parent"

@@ -2,40 +2,37 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="#FFFFFF"
-    android:padding="6dp">
-<!-- 	<ScrollView  -->
-<!--         android:layout_height="wrap_content" -->
-<!--         android:layout_width="fill_parent">  -->
+    android:padding="6dp" >
 
-	<Button 
-	    android:id="@+id/send_btn"
-	    android:layout_alignParentBottom="true"
-	    android:layout_height="wrap_content"
-	    android:layout_width="fill_parent"
-	    android:text="@string/send_btn"/>
+    <!-- <ScrollView -->
+    <!-- android:layout_height="wrap_content" -->
+    <!-- android:layout_width="fill_parent"> -->
 
-	<LinearLayout 
-	    android:layout_above="@id/send_btn"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical">
-		<AutoCompleteTextView
-		    android:id="@+id/user_name"
-		    android:layout_height="wrap_content"
-		    android:layout_width="fill_parent"
-		    android:hint="@string/user_name_filter"/>
-	
-		
-		<EditText
-		    android:id="@+id/content"
-		    android:gravity="top"
-		    android:hint="@string/content_hint"
-		    android:layout_width="fill_parent"
-		    android:layout_height="fill_parent"
-		    android:minHeight="100dp"/>
-	</LinearLayout>
-		
-	
-	
+    <Button
+        android:id="@+id/send_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/send_btn" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/send_btn"
+        android:orientation="vertical" >
+
+        <Button
+            android:id="@+id/share_to_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="top"
+            android:hint="@string/content_hint"
+            android:minHeight="100dp" />
+    </LinearLayout>
+
 </RelativeLayout>

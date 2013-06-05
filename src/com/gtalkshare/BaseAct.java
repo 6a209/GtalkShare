@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.flurry.android.FlurryAgent;
@@ -12,18 +13,15 @@ import com.flurry.android.FlurryAgent;
 
 public class BaseAct extends SherlockActivity{
 	
-	protected LinearLayout mLyTitle;
-	protected FrameLayout mLyBody;
+	protected FrameLayout mBodyLy;
 	protected ProgressDialog mProgressDialog;
 	
 	@Override
 	public void onCreate(Bundle bundle){
 		super.onCreate(bundle);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mLyTitle = new LinearLayout(this);
 		setContentView(R.layout.base_layout);
-		mLyBody = (FrameLayout)findViewById(R.id.base_body);
-		mLyTitle = (LinearLayout)findViewById(R.id.base_title);
+		mBodyLy = (FrameLayout)findViewById(R.id.base_body);
+//		mTitleLy = (LinearLayout)findViewById(R.id.base_title);
 	}
 
 	@Override
@@ -58,6 +56,10 @@ public class BaseAct extends SherlockActivity{
 		if(null != mProgressDialog){
 			mProgressDialog.dismiss();
 		}
+	}
+	
+	protected void toast(String msg){
+		Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
 	}
 	
 	/**

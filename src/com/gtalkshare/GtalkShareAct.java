@@ -5,14 +5,16 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem.OnMenuItemClickListener;
 
 /**
  * 
@@ -21,18 +23,20 @@ import android.widget.Toast;
  */
 public class GtalkShareAct extends BaseAct {
 	
-	private GtalkService mService;
+	private GtalkAPI mService;
 	private GtalkUtils mUtils;
 	
-	private Button mBtnRight;
+//	private Button mBtnRight;
 	private TextView mTvTitle;
 	private EditText mEditContent;
-	private AutoCompleteTextView mUserNameAutoComplete;
+	private TextView mShare2FriendsTv;
+//	private AutoCompleteTextView mUserNameAutoComplete;
 	private Button mSendBtn;
-	
+	private String mFriendName;
 	
 	
 	private static final int TO_SETTING = 0x01;
+	private static final int TO_CHIOCE_FRIENDS = 0x02;
 	
 	private static final int INIT_ACCOUNT_MSG = 0x10;
 	private static final int SEND_MSG = 0x11;
@@ -58,42 +62,63 @@ public class GtalkShareAct extends BaseAct {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LayoutInflater inflater = LayoutInflater.from(this);
-        inflater.inflate(R.layout.base_title, mLyTitle, true);
-        inflater.inflate(R.layout.main, mLyBody, true);
-        mTvTitle = (TextView)findViewById(R.id.title_tv_content);
-        mTvTitle.setText("Gtalk");
+        inflater.inflate(R.layout.main, mBodyLy, true);
         Intent intent = getIntent();
         String content = intent.getStringExtra(Intent.EXTRA_TEXT);
         mUtils = GtalkUtils.getInstance(this);
-        mService = new GtalkService();
-        
+        mService = GtalkAPI.instance();
         mEditContent = (EditText)findViewById(R.id.content);
-        mUserNameAutoComplete = (AutoCompleteTextView)findViewById(R.id.user_name);
+        mShare2FriendsTv = (TextView)findViewById(R.id.share_to_friends);
         mSendBtn = (Button)findViewById(R.id.send_btn);
         
-        mBtnRight = (Button)findViewById(R.id.title_btn_right);
-        mBtnRight.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				toSetting();
-			}
-		});
+//        mBtnRight = new Button(this);
+//        mBtnRight.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				toSetting();
+//			}
+//		});
         init(content);
+        toChioceFriends();
     }
     
     @Override
+	public boolean onCreateOptionsMenu(Menu menu){
+	
+		menu.add("setting")
+			.setIcon(R.drawable.moreitems_setting_icon)
+			.setOnMenuItemClickListener(new OnMenuItemClickListener() {
+				
+				@Override
+				public boolean onMenuItemClick(com.actionbarsherlock.view.MenuItem item) {
+					Intent intent = new Intent();
+					intent.setClass(GtalkShareAct.this, GtalkLoginAct.class);
+					startActivity(intent);
+					return true;
+				}
+			})
+			.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+			
+		return true;
+	}
+    
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+    	if(resultCode != RESULT_OK){
+    		return;
+    	}
     	if(TO_SETTING == requestCode){
-//    		if(!mIsSucc){
-//        		init(mEditContent.getText().toString());
-//    		}
+    	}
+    	if(TO_CHIOCE_FRIENDS == requestCode){
+    		mFriendName = data.getStringExtra(GtalkFriendsAct.FRIEND_NAME_KEY);
+    		if(null != mFriendName){
+        		mShare2FriendsTv.setText(mFriendName);
+    		}
     	}
     }
     
     private void init(String content){
     	mEditContent.setText(content);
-    	
-//    	reqInitAccount(userName, password);
     	mSendBtn.setOnClickListener(new OnClickListener() {
     		
 			@Override
@@ -106,8 +131,14 @@ public class GtalkShareAct extends BaseAct {
     
     private void toSetting(){
     	Intent intent = new Intent();
-		intent.setClass(this, GtalkPreferenceAct.class);
+		intent.setClass(this, GtalkLoginAct.class);
 		startActivityForResult(intent, TO_SETTING);
+    }
+    
+    private void toChioceFriends(){
+    	Intent intent = new Intent();
+    	intent.setClass(this, GtalkFriendsAct.class);
+    	startActivityForResult(intent, TO_CHIOCE_FRIENDS);
     }
     
  
@@ -119,8 +150,7 @@ public class GtalkShareAct extends BaseAct {
 				mUtils.getString(R.string.content_hint), Toast.LENGTH_SHORT).show();
 			return;
 		}
-		final String userName = mUserNameAutoComplete.getText().toString();
-		if(null == userName || 0 == userName.length()){
+		if(null == mFriendName || 0 == mFriendName.length()){
 			Toast.makeText(GtalkShareAct.this, 
 				mUtils.getString(R.string.user_name_filter), Toast.LENGTH_SHORT).show();
 			return;
@@ -128,7 +158,7 @@ public class GtalkShareAct extends BaseAct {
 		new Thread(){
 			@Override
 			public void run(){
-				boolean success = mService.sendMessage(userName, content);
+				boolean success = mService.sendMessage(mFriendName, content);
 				if(success){
 					mHander.sendEmptyMessage(SEND_MSG);
 				}

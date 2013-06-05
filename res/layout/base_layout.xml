@@ -4,12 +4,6 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-	<LinearLayout 
-	    android:id="@+id/base_title"
-	    android:layout_width="fill_parent"
-	    android:layout_height="52dp"
-	    android:orientation="horizontal"/>
-	
 	<FrameLayout 
 	    android:id="@+id/base_body"
 	    android:layout_width="fill_parent"

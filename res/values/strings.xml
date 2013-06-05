@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, GtalkShareActivity!</string>
-    <string name="app_name">Gtalk</string>
+    <string name="app_name">Gtalk Share</string>
     
     <string name="account_setting">Account Setting</string>
     <string name="user_name">User Name</string>
@@ -11,9 +10,12 @@
     <string name="user_name_summary">please input your gtalk account</string>
     <string name="password_summary">please input your gtalk password</string>
     
-    <string name="send_btn">send</string>
+    <string name="send_btn">Send</string>
     <string name="content_hint">please input content</string>
-    <string name="user_name_filter">please input friends gtalk user name</string>
+    <string name="user_name_filter">please choise friend\'s gtalk user name</string>
     <string name="share_success">share success</string>
     <string name="err_toast">net err or account set err</string>
+    <string name="choice_friend">choice a friend</string>
+    <string name="connect">Connect</string>
+    <string name="login">Login</string>
 </resources>

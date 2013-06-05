@@ -1,7 +1,5 @@
 package com.gtalkshare;
 
-import java.util.List;
-
 import android.content.Context;
 import android.graphics.Color;
 import android.view.View;
@@ -27,7 +25,7 @@ public class GtalkShareFriednsAdapter extends ArrayAdapter<String> {
 	
 	public View getView(int position, View convertView, ViewGroup parent){
 		TextView tv = (TextView)super.getView(position, convertView, parent);
-		tv.setBackgroundColor(Color.WHITE);
+//		tv.setBackgroundColor(Color.WHITE);
 		tv.setText(getItem(position));
 		return tv;
 	}
