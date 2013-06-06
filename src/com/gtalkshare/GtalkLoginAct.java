@@ -38,6 +38,7 @@ public class GtalkLoginAct extends BaseAct{
 					Intent intent = new Intent();
 					intent.setClass(GtalkLoginAct.this, GtalkFriendsAct.class);
 					startActivity(intent);
+					finish();
 				}else{
 					toast("connect err");
 				}
