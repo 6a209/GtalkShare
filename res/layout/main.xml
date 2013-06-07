@@ -22,6 +22,7 @@
         android:orientation="vertical" >
 
         <Button
+            android:text="@string/choice_friend"
             android:id="@+id/share_to_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

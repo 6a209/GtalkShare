@@ -25,6 +25,7 @@
         <activity
             android:name=".GtalkShareAct"
             android:configChanges="orientation|keyboardHidden|navigation"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Sherlock" >
             <intent-filter>
@@ -35,21 +36,19 @@
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
-        
         <activity
             android:name=".GtalkFriendsAct"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:screenOrientation="portrait" >
         </activity>
-        
-        
         <activity
             android:name=".GtalkLoginAct"
             android:configChanges="orientation|keyboardHidden|navigation"
             android:screenOrientation="portrait" >
         </activity>
     </application>
-	<uses-permission android:name="android.permission.USE_CREDENTIALS"/>
+
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />

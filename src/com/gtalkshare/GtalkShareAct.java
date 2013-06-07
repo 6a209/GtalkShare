@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,21 +27,16 @@ public class GtalkShareAct extends BaseAct {
 	private GtalkAPI mService;
 	private GtalkUtils mUtils;
 	
-//	private Button mBtnRight;
-	private TextView mTvTitle;
 	private EditText mEditContent;
 	private TextView mShare2FriendsTv;
-//	private AutoCompleteTextView mUserNameAutoComplete;
 	private Button mSendBtn;
-	private String mFriendName;
+	private String mFriendUserName;
 	
 	
 	private static final int TO_SETTING = 0x01;
 	private static final int TO_CHIOCE_FRIENDS = 0x02;
 	
-	private static final int INIT_ACCOUNT_MSG = 0x10;
 	private static final int SEND_MSG = 0x11;
-	private static final int GET_FIRENDS_MSG = 0x12;
 	
 	private Handler mHander = new Handler(){
 		@Override
@@ -50,6 +46,7 @@ public class GtalkShareAct extends BaseAct {
 				String str = getResources().getString(R.string.share_success);
 				Toast.makeText(GtalkShareAct.this, str, Toast.LENGTH_SHORT).show();
 				finish();
+//				android.os.Process.killProcess(android.os.Process.myPid());
 				break;
 			default:
 				break;
@@ -70,16 +67,27 @@ public class GtalkShareAct extends BaseAct {
         mEditContent = (EditText)findViewById(R.id.content);
         mShare2FriendsTv = (TextView)findViewById(R.id.share_to_friends);
         mSendBtn = (Button)findViewById(R.id.send_btn);
-        
-//        mBtnRight = new Button(this);
-//        mBtnRight.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				toSetting();
-//			}
-//		});
+        mShare2FriendsTv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+//				Log.d("gtalk share act", "" + getTaskId());
+				toChioceFriends();
+			}
+		});
         init(content);
         toChioceFriends();
+    }
+    
+    @Override
+    public void onNewIntent(Intent intent){
+    	super.onNewIntent(intent);
+    	mFriendUserName = intent.getStringExtra(GtalkFriendsAct.FRIEND_USER_NAME_KEY);
+    	String nickName = intent.getStringExtra(GtalkFriendsAct.FRIEND_NICK_NAME_KEY);
+		if(null == nickName || 0 == nickName.length()){
+			nickName = mFriendUserName;
+		}
+		mShare2FriendsTv.setText(nickName);
     }
     
     @Override
@@ -110,9 +118,9 @@ public class GtalkShareAct extends BaseAct {
     	if(TO_SETTING == requestCode){
     	}
     	if(TO_CHIOCE_FRIENDS == requestCode){
-    		mFriendName = data.getStringExtra(GtalkFriendsAct.FRIEND_NAME_KEY);
-    		if(null != mFriendName){
-        		mShare2FriendsTv.setText(mFriendName);
+    		mFriendUserName = data.getStringExtra(GtalkFriendsAct.FRIEND_NICK_NAME_KEY);
+    		if(null != mFriendUserName){
+        		mShare2FriendsTv.setText(mFriendUserName);
     		}
     	}
     }
@@ -138,7 +146,8 @@ public class GtalkShareAct extends BaseAct {
     private void toChioceFriends(){
     	Intent intent = new Intent();
     	intent.setClass(this, GtalkFriendsAct.class);
-    	startActivityForResult(intent, TO_CHIOCE_FRIENDS);
+    	intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	startActivity(intent);
     }
     
  
@@ -150,7 +159,7 @@ public class GtalkShareAct extends BaseAct {
 				mUtils.getString(R.string.content_hint), Toast.LENGTH_SHORT).show();
 			return;
 		}
-		if(null == mFriendName || 0 == mFriendName.length()){
+		if(null == mFriendUserName || 0 == mFriendUserName.length()){
 			Toast.makeText(GtalkShareAct.this, 
 				mUtils.getString(R.string.user_name_filter), Toast.LENGTH_SHORT).show();
 			return;
@@ -158,11 +167,19 @@ public class GtalkShareAct extends BaseAct {
 		new Thread(){
 			@Override
 			public void run(){
-				boolean success = mService.sendMessage(mFriendName, content);
+				boolean success = mService.sendMessage(mFriendUserName, content);
 				if(success){
 					mHander.sendEmptyMessage(SEND_MSG);
 				}
 			}
 		}.start();
     }
+    
+    @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event){
+		if(keyCode == KeyEvent.KEYCODE_BACK){
+				android.os.Process.killProcess(android.os.Process.myPid());
+		}
+		return super.onKeyDown(keyCode, event);
+	}
 }

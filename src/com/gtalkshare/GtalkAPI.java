@@ -108,16 +108,11 @@ public class GtalkAPI {
 	/**
 	 * 获取好友列表
 	 */
-	public String[] getFriends() {
+	public RosterEntry[] getFriends() {
 		Collection<RosterEntry> rosterEntries = mConnection.getRoster().getEntries();
-		String [] array = new String[rosterEntries.size()];
 		RosterEntry [] rosterArray = new RosterEntry[rosterEntries.size()];
 		rosterEntries.toArray(rosterArray);
-		for(int i = 0; i < rosterEntries.size(); i++){
-			
-			array[i] = rosterArray[i].getUser();
-		}
-		return array;
+		return rosterArray;
 	}
 
 	/**

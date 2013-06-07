@@ -53,7 +53,7 @@ public class BaseAct extends SherlockActivity{
 	}
 	
 	protected void hideProgress(){
-		if(null != mProgressDialog){
+		if(null != mProgressDialog && mProgressDialog.isShowing()){
 			mProgressDialog.dismiss();
 		}
 	}

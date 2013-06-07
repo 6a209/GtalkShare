@@ -1,6 +1,7 @@
 package com.gtalkshare;
 
-import android.app.Activity;
+import org.jivesoftware.smack.RosterEntry;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
@@ -30,20 +30,20 @@ public class GtalkFriendsAct extends BaseAct{
 
 	private GtalkAPI mService;	
 	private GtalkShareFriednsAdapter mAdapter;
-	private GtalkUtils mUtils;
+//	private GtalkUtils mUtils;
 	
 	private ListView mListView;
 	private EditText mFilterEt;
 	private boolean mIsSucc = false;
-	private String [] mFriendsArray;
-	private TextView mTitleTv;
+	private RosterEntry [] mFriendsArray;
 	
 	private static final int TO_SETTING = 0x01;
 	
 	private static final int INIT_ACCOUNT_MSG = 0x10;
 	private static final int GET_FIRENDS_MSG = 0x12;
 	
-	public static final String FRIEND_NAME_KEY = "friends_name";
+	public static final String FRIEND_NICK_NAME_KEY = "friends_name";
+	public static final String FRIEND_USER_NAME_KEY = "user_name";
 	
 	private Handler mHander = new Handler(){
 		@Override
@@ -53,12 +53,14 @@ public class GtalkFriendsAct extends BaseAct{
 				if(mIsSucc){
 		    		reqFriends();
 		    	}else{
+		    		hideProgress();
 		    		Toast.makeText(GtalkFriendsAct.this, 
 		    			getString(R.string.err_toast), Toast.LENGTH_SHORT).show();
 		    	}
 				
 				break;
 			case GET_FIRENDS_MSG:
+				hideProgress();
 				mAdapter = new GtalkShareFriednsAdapter(GtalkFriendsAct.this, 
 					android.R.layout.simple_list_item_1, android.R.id.text1, mFriendsArray);
 				mListView.setAdapter(mAdapter);
@@ -78,9 +80,9 @@ public class GtalkFriendsAct extends BaseAct{
 		if(null == accessToken || 0 == accessToken.length()){
 			toSetting();
 			finish();
+			return;
 		}
 		mListView = (ListView)findViewById(R.id.friend_list);
-		mUtils = GtalkUtils.getInstance(this);
 		mService = GtalkAPI.instance();
 		mFilterEt = new EditText(this);
 		mFilterEt.setLayoutParams(new LayoutParams(
@@ -102,20 +104,36 @@ public class GtalkFriendsAct extends BaseAct{
 				mAdapter.getFilter().filter(s.toString());
 			}
 		});
+		
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				Intent intent = new Intent();
-				intent.putExtra(FRIEND_NAME_KEY, 
-					parent.getAdapter().getItem(position).toString());
-				setResult(Activity.RESULT_OK, intent);
-				finish();
+				Intent intent = new Intent(GtalkFriendsAct.this, GtalkShareAct.class);
+				RosterEntry re =  (RosterEntry)parent.getAdapter().getItem(position);
+				String nickName = re.getName();
+				String userName = re.getUser();
+				intent.putExtra(FRIEND_NICK_NAME_KEY, nickName);
+				intent.putExtra(FRIEND_USER_NAME_KEY, userName);
+				startActivity(intent);
 			}
 		});
+		showProgress("Connect");
 		reqInitAccount(user, accessToken);
-//		reqFriends();
+		Log.d("gtalk friends act", "" + getTaskId());
+	}
+	
+	@Override
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+		Log.d("GtalkFriendsAct", "onNewIntent");
+	}
+	
+	@Override
+	public void onDestroy(){
+		super.onDestroy();
+		Log.d("GtalkFriendsAct", "onDestory");
 	}
 	
 	@Override
@@ -130,16 +148,6 @@ public class GtalkFriendsAct extends BaseAct{
 		return true;
 	}
 	
-//	private void initAccount(){
-//		String userName = mUtils.getUser();
-//    	String password = mUtils.getPassword();
-//    	if(userName.equals(GtalkUtils.INVALUE) || password.equals(GtalkUtils.INVALUE)){
-//    		toSetting();
-//    		return;
-//    	}
-//    	reqInitAccount(userName, password);
-//	}
-//	
 	private void reqInitAccount(final String userName, final String accessToken) {
 		new Thread() {
 			@Override
@@ -155,9 +163,8 @@ public class GtalkFriendsAct extends BaseAct{
 		new Thread() {
 			@Override
 			public void run() {
-				mFriendsArray = mService.getFriends();
+				 mFriendsArray = mService.getFriends();
 				Message msg = mHander.obtainMessage(GET_FIRENDS_MSG);
-				Log.d(" size is ======> =====>", mFriendsArray.length + "");
 				mHander.sendMessage(msg);
 			}
 		}.start();
